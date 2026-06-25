@@ -4,6 +4,8 @@ members = [
     "campaign",
     "token-bridge",
     "common",
+    "factory",
+    "crates/tools/event-monitor",
 ]
 
 [workspace.dependencies]

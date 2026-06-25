@@ -1,0 +1,41 @@
+[package]
+name = "campaign-fuzzer"
+version = "0.0.0"
+publish = false
+edition = "2021"
+rust-version = "1.79.0"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+arbitrary = { version = "1.0", features = ["derive"] }
+soroban-sdk = { workspace = true, features = ["testutils"] }
+soroban-env-host = "26.0.1"
+soroban-ledger-snapshot = "26.0.1"
+
+[dependencies.campaign]
+path = ".."
+features = ["testutils"]
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+opt-level = 3
+sanitizer = "address"
+
+[[bin]]
+name = "fuzz_donate"
+path = "fuzz_targets/fuzz_donate.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_release_milestone"
+path = "fuzz_targets/fuzz_release_milestone.rs"
+test = false
+doc = false
