@@ -244,6 +244,21 @@ impl CampaignFactory {
             .unwrap_or(0)
     }
 
+    /// Set the treasury address that receives deployment fees.
+    ///
+    /// Admin only.
+    pub fn set_treasury(env: Env, new_treasury: Address) {
+        Self::require_admin(&env);
+        env.storage()
+            .instance()
+            .set(&DataKey::Treasury, &new_treasury);
+
+        env.events().publish(
+            (symbol_short!("treasury_s"),),
+            new_treasury,
+        );
+    }
+
     // ── Internal ──────────────────────────────────────────────────────────────
 
     fn require_admin(env: &Env) {
