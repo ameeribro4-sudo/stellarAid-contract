@@ -3,6 +3,8 @@
 
 extern crate std;
 
+mod helpers;
+
 use crate::contract::{Campaign, CampaignClient};
 use crate::errors::Error;
 use crate::test::helpers::{create_campaign, create_campaign_with_milestones};
