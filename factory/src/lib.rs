@@ -76,6 +76,11 @@ impl CampaignFactory {
         env.storage()
             .instance()
             .set(&DataKey::CampaignWasmHash, &new_hash);
+
+        env.events().publish(
+            (symbol_short!("wasm_upd"),),
+            new_hash,
+        );
     }
 
     /// Returns the currently stored campaign WASM hash.
