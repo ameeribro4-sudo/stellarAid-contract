@@ -1,3 +1,5 @@
 /target
 .env
 *.wasm
+node_modules/
+package-lock.json
