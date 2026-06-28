@@ -15,6 +15,7 @@ pub enum DataKey {
     Withdrawal(u64) = 0,
     WithdrawalsByCampaign(u64) = 1,
     Admin = 2,
+    Initialized = 3,
     DonationContract = 3,
     WithdrawnAmount(u64) = 4,
 }
@@ -47,7 +48,11 @@ pub struct WithdrawalContract;
 impl WithdrawalContract {
     pub fn initialize(env: Env, admin: Address, donation_contract: Address) {
         admin.require_auth();
+        if env.storage().instance().has(&DataKey::Initialized) {
+            panic!("already initialized");
+        }
         env.storage().instance().set(&DataKey::Admin, &admin);
+        env.storage().instance().set(&DataKey::Initialized, &true);
         env.storage().instance().set(&DataKey::DonationContract, &donation_contract);
     }
 
@@ -130,6 +135,10 @@ impl WithdrawalContract {
         env.storage().persistent().get(&DataKey::WithdrawalsByCampaign(campaign_id)).unwrap_or(Vec::new(&env))
     }
 
+    pub fn upgrade(env: Env, admin: Address, new_wasm_hash: BytesN<32>) {
+        admin.require_auth();
+        Self::ensure_admin(&env, &admin);
+        env.deployer().update_current_contract_wasm(&new_wasm_hash);
     pub fn get_withdrawn_amount(env: Env, campaign_id: u64) -> i128 {
         env.storage().persistent().get(&DataKey::WithdrawnAmount(campaign_id)).unwrap_or(0_i128)
     }
